@@ -2,6 +2,7 @@ import os
 import sys
 import asyncio
 import requests
+import logging
 from collections import deque
 
 class state:
@@ -11,17 +12,17 @@ class state:
 
 
 telegramBotToken = "5892763019:AAGEbvptS5kOnkOon-ksvIfWLhj9q4leqmo"
-chatId = "-834737152"
-
 hostname = sys.argv[1]
-server_polling_interval = 1
+chatId = "-1001713448987"
+
+server_polling_interval = 30
 
 state_values = {
     "Off": state(value="IsTurnedOff", message="Свет выключен:("),
     "On": state(value="IsRunning", message="Сейчас есть свет!")
 }
 
-state_buffer_length = 10
+state_buffer_length = 6
 turned_on_theshold = state_buffer_length * 0.7
 
 state_buffer = deque(maxlen=state_buffer_length)
@@ -48,18 +49,22 @@ async def do_state_change_on_threshold():
             and current_signaled_state is not state_values["On"]):
         post_message_to_group(state_values["On"].message)
         current_signaled_state = state_values["On"]
+    logging.info(f'CURRENT COUNT OF ONs IN state_buffer: {count_of_on_states()}')
 
 def count_of_on_states():
     return state_buffer.count(state_values["On"])
 
 def retrieve_current_state():
+    logging.info(f'PINGING {hostname}')
     response = not os.system("ping -c 1 " + hostname)
-
+    
     if response == 0:
         return state_values["Off"]
     return state_values["On"]
 
 def post_message_to_group(message):
+    global chatId
+    global telegramBotToken
     url = f"https://api.telegram.org/bot{telegramBotToken}/sendMessage?chat_id={chatId}&text={message}"
     requests.get(url)
 
@@ -67,6 +72,7 @@ def post_message_to_group(message):
 async def main():
     global current_signaled_state
     global state_buffer
+    logging.basicConfig(filename='/home/bot_execution.log', encoding='utf-8', level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
     for x in range(int(state_buffer_length / 2)):
         state_buffer.append(state_values["Off"])
 
