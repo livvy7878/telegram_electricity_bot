@@ -7,6 +7,16 @@ import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from collections import deque
 
+class Server(BaseHTTPRequestHandler):
+    def do_GET(self):
+        state_lock.acquire()
+        state_buffer.append(state_values["On"])
+        state_lock.release()
+        self.send_response(200)
+        self.send_header("Content-type", "application/json")
+        self.end_headers()
+        self.wfile.write(bytes("{content: \"OK\"}", "utf-8"))
+
 class state:
     def __init__(self, value, message):
         self.value = value
@@ -14,7 +24,6 @@ class state:
 
 
 telegramBotToken = "5892763019:AAGEbvptS5kOnkOon-ksvIfWLhj9q4leqmo"
-hostname = sys.argv[1]
 chatId = "-1001713448987"
 
 insert_off_interval = 30
@@ -90,12 +99,10 @@ async def main():
 
     await send_message_on_status_change()
 
-asyncio.run(run_server())
-asyncio.run(main())
-
-class Server(BaseHTTPRequestHandler):
-    def GET(self):
-        state_lock.acquire()
-        state_buffer.append(state_values["On"])
-        state_lock.release()
-        self.send_response(200)
+try:
+    thread_with_server = threading.Thread(target=run_server)
+    thread_with_server.start()
+    
+    asyncio.run(main())
+except Exception as e:
+    logging.critical(e)
