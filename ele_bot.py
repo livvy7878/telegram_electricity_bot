@@ -2,12 +2,9 @@ import os
 import sys
 import asyncio
 import requests
-<<<<<<< HEAD
 import logging
-=======
 import threading
 from http.server import HTTPServer, BaseHTTPRequestHandler
->>>>>>> b850b7b353b1ec564cc94d9c854b699b00468ee8
 from collections import deque
 
 class state:
@@ -20,7 +17,7 @@ telegramBotToken = "5892763019:AAGEbvptS5kOnkOon-ksvIfWLhj9q4leqmo"
 hostname = sys.argv[1]
 chatId = "-1001713448987"
 
-server_polling_interval = 30
+insert_off_interval = 30
 
 state_values = {
     "Off": state(value="IsTurnedOff", message="Свет выключен:("),
