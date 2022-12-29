@@ -1,4 +1,5 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
+EXPOSE 9123
 COPY ele_bot.py .
 COPY requirements.txt .
 RUN apt-get update && apt-get -y install python3-pip && pip install --upgrade pip==22.3.1 && apt-get install -y iputils-ping

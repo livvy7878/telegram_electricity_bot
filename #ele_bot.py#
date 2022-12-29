@@ -30,8 +30,8 @@ chatId = "-1001713448987"
 insert_off_interval = 30
 
 state_values = {
-    "Off": state(value="IsTurnedOff", message="Світло вимкнено:("),
-    "On": state(value="IsRunning", message="Зараз є світло!")
+    "Off": state(value="IsTurnedOff", message="Свет выключен:("),
+    "On": state(value="IsRunning", message="Сейчас есть свет!")
 }
 
 state_buffer_length = 6
@@ -92,7 +92,7 @@ async def main():
 
     logging.basicConfig(filename='/home/bot_execution.log', encoding='utf-8', level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
-    for x in range(int(state_buffer_length / 2)):
+    for x in range(int(state_buffer_length / 2)): # 
         state_buffer.append(state_values["Off"])
 
     for x in range(int(state_buffer_length / 2)):
